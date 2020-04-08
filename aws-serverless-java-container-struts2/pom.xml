@@ -6,16 +6,16 @@
     <name>AWS Serverless Java container support - Struts2 implementation</name>
     <description>Allows Java applications written for the Struts2 framework to run in AWS Lambda</description>
     <url>https://aws.amazon.com/lambda</url>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.5</version>
 
     <parent>
         <groupId>com.amazonaws.serverless</groupId>
         <artifactId>aws-serverless-java-container</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>1.5</version>
     </parent>
 
     <properties>
-        <struts2.version>2.5.22</struts2.version>
+        <struts2.version>2.5.20</struts2.version>
     </properties>
 
     <dependencies>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.amazonaws.serverless</groupId>
             <artifactId>aws-serverless-java-container-core</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>1.5</version>
         </dependency>
 
         <dependency>
