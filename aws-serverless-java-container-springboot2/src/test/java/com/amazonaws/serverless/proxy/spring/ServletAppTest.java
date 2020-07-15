@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(Parameterized.class)
 public class ServletAppTest {
@@ -190,19 +191,5 @@ public class ServletAppTest {
         AwsProxyResponse resp = handler.handleRequest(req, lambdaContext);
         assertNotNull(resp);
         assertEquals(404, resp.getStatusCode());
-    }
-
-    @Test
-    public void echoMessage_populatesSingleValueHeadersForHttpApiV2() {
-        AwsProxyRequestBuilder req = new AwsProxyRequestBuilder("/message", "POST")
-                .header(HttpHeaders.CONTENT_TYPE, "application/json;v=1")
-                .header(HttpHeaders.ACCEPT, "application/json;v=1")
-                .body(new MessageData("test message"));
-        AwsProxyResponse resp = handler.handleRequest(req, lambdaContext);
-        if ("HTTP_API".equals(type)) {
-            assertNotNull(resp.getHeaders());
-        } else {
-            assertNull(resp.getHeaders());
-        }
     }
 }
