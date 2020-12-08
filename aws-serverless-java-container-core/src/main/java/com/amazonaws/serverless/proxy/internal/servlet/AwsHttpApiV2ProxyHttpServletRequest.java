@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+ * with the License. A copy of the License is located at
+ *
+ * http://aws.amazon.com/apache2.0/
+ *
+ * or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+ * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
 package com.amazonaws.serverless.proxy.internal.servlet;
 
 import com.amazonaws.serverless.proxy.internal.LambdaContainerHandler;
@@ -49,6 +61,10 @@ public class AwsHttpApiV2ProxyHttpServletRequest extends AwsHttpServletRequest {
         securityContext = sc;
         queryString = parseRawQueryString(request.getRawQueryString());
         headers = headersMapToMultiValue(request.getHeaders());
+    }
+
+    public HttpApiV2ProxyRequest getRequest() {
+        return request;
     }
 
     @Override
@@ -213,7 +229,7 @@ public class AwsHttpApiV2ProxyHttpServletRequest extends AwsHttpServletRequest {
     @Override
     public String getCharacterEncoding() {
         if (headers == null) {
-            return null;
+            return config.getDefaultContentCharset();
         }
         return parseCharacterEncoding(headers.getFirst(HttpHeaders.CONTENT_TYPE));
     }
@@ -252,11 +268,6 @@ public class AwsHttpApiV2ProxyHttpServletRequest extends AwsHttpServletRequest {
             return null;
         }
         return headers.getFirst(HttpHeaders.CONTENT_TYPE);
-    }
-
-    @Override
-    public ServletInputStream getInputStream() throws IOException {
-        return bodyStringToInputStream(request.getBody(), request.isBase64Encoded());
     }
 
     @Override
@@ -341,6 +352,14 @@ public class AwsHttpApiV2ProxyHttpServletRequest extends AwsHttpServletRequest {
             return Integer.parseInt(port);
         }
         return 443; // default port
+    }
+
+    @Override
+    public ServletInputStream getInputStream() throws IOException {
+        if (requestInputStream == null) {
+            requestInputStream = new AwsServletInputStream(bodyStringToInputStream(request.getBody(), request.isBase64Encoded()));
+        }
+        return requestInputStream;
     }
 
     @Override
@@ -463,16 +482,19 @@ public class AwsHttpApiV2ProxyHttpServletRequest extends AwsHttpServletRequest {
 
         MultiValuedTreeMap<String, String> qsMap = new MultiValuedTreeMap<>();
         for (String value : qs.split(QUERY_STRING_SEPARATOR)) {
-            if (!value.contains(QUERY_STRING_KEY_VALUE_SEPARATOR)) {
-                log.warn("Invalid query string parameter: " + SecurityUtils.crlf(value));
-                continue;
-            }
-
-            String[] kv = value.split(QUERY_STRING_KEY_VALUE_SEPARATOR);
             try {
-                qsMap.add(URLDecoder.decode(kv[0], LambdaContainerHandler.getContainerConfig().getUriEncoding()), kv[1]);
+                if (!value.contains(QUERY_STRING_KEY_VALUE_SEPARATOR)) {
+                    qsMap.add(URLDecoder.decode(value, LambdaContainerHandler.getContainerConfig().getUriEncoding()), null);
+                    log.warn("Query string parameter with empty value and no =: " + SecurityUtils.crlf(value));
+                    continue;
+                }
+
+                String[] kv = value.split(QUERY_STRING_KEY_VALUE_SEPARATOR);
+                String key = URLDecoder.decode(kv[0], LambdaContainerHandler.getContainerConfig().getUriEncoding());
+                String val = kv.length == 2 ? kv[1] : null;
+                qsMap.add(key, val);
             } catch (UnsupportedEncodingException e) {
-                log.error("Unsupported encoding in query string key: " + SecurityUtils.crlf(kv[0]), e);
+                log.error("Unsupported encoding in query string key: " + SecurityUtils.crlf(value), e);
             }
         }
         return qsMap;

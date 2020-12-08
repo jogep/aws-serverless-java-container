@@ -26,7 +26,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <jackson.version>2.10.1</jackson.version>
+        <jackson.version>2.10.3</jackson.version>
         <spark.version>2.9.1</spark.version>
     </properties>
 
@@ -105,18 +105,6 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- don't build a jar, we'll use the classes dir -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.1.1</version>
-                        <executions>
-                            <execution>
-                                <id>default-jar</id>
-                                <phase>none</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!-- select and copy only runtime dependencies to a temporary lib folder -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

@@ -4,15 +4,25 @@
     <groupId>com.amazonaws.serverless</groupId>
     <artifactId>aws-serverless-java-container</artifactId>
     <packaging>pom</packaging>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <name>AWS Serverless Java container</name>
-
-    <!-- https://mvnrepository.com/artifact/org.sonatype.oss/oss-parent -->
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+    <description>A Java framework to run Spring, Spring Boot, Jersey, Spark, and Struts applications inside AWS Lambda</description>
+    <url>https://github.com/awslabs/aws-serverless-java-container</url>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/awslabs/aws-serverless-java-container/issues</url>
+    </issueManagement>
+    
+    <developers>
+        <developer>
+            <id>amazonwebservices</id>
+            <organization>Amazon Web Services</organization>
+            <organizationUrl>https://aws.amazon.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
 
     <modules>
         <module>aws-serverless-java-container-core</module>
@@ -33,7 +43,35 @@
         <url>https://github.com/awslabs/aws-serverless-java-container.git</url>
         <connection>scm:git:git@github.com:awslabs/aws-serverless-java-container.git</connection>
         <developerConnection>scm:git:git@github.com:awslabs/aws-serverless-java-container.git</developerConnection>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
+
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://aws.oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://aws.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <licenses>
         <license>
@@ -45,8 +83,9 @@
 
     <properties>
         <jacoco.minCoverage>0.7</jacoco.minCoverage>
-        <dependencyCheck.version>5.2.2</dependencyCheck.version>
-        <jackson.version>2.10.1</jackson.version>
+        <dependencyCheck.version>5.3.2</dependencyCheck.version>
+        <jackson.version>2.10.3</jackson.version>
+        <slf4j.version>1.7.30</slf4j.version>
     </properties>
 
     <dependencies>
@@ -62,14 +101,14 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.8.0-beta2</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.8.0-beta2</version>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
 

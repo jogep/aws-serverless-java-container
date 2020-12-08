@@ -258,7 +258,7 @@ public class AwsProxyRequestBuilder {
     }
 
     public AwsProxyRequestBuilder body(Object body) {
-        if (request.getMultiValueHeaders() != null && request.getMultiValueHeaders().getFirst(HttpHeaders.CONTENT_TYPE).equals(MediaType.APPLICATION_JSON)) {
+        if (request.getMultiValueHeaders() != null && request.getMultiValueHeaders().getFirst(HttpHeaders.CONTENT_TYPE).startsWith(MediaType.APPLICATION_JSON)) {
             try {
                 return body(LambdaContainerHandler.getObjectMapper().writeValueAsString(body));
             } catch (JsonProcessingException e) {
@@ -457,7 +457,7 @@ public class AwsProxyRequestBuilder {
         if (request.getMultiValueHeaders() != null && request.getMultiValueHeaders().containsKey(HttpHeaders.COOKIE)) {
             req.setCookies(Arrays.asList(request.getMultiValueHeaders().getFirst(HttpHeaders.COOKIE).split(";")));
         }
-        req.setHeaders(new HashMap<>());
+        req.setHeaders(new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
         if (request.getMultiValueHeaders() != null) {
             request.getMultiValueHeaders().forEach((key, value) -> req.getHeaders().put(key, value.get(0)));
         }
@@ -482,7 +482,6 @@ public class AwsProxyRequestBuilder {
                         // we do not encode it
                         rawQueryString.append(URLEncoder.encode(s, "UTF-8").replaceAll("%2C", ","));
                     } catch (UnsupportedEncodingException e) {
-                        System.out.println("Ex!");
                         throw new RuntimeException(e);
                     }
                 }
